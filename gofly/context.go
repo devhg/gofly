@@ -14,7 +14,9 @@ type Context struct {
 	Req    *http.Request
 
 	// request into
-	Path   string
+	Path string
+	// 动态route
+	Params map[string]string
 	Method string
 
 	// response info
@@ -39,6 +41,11 @@ func (c *Context) PostForm(key string) string {
 // get query params from the request
 func (c *Context) Query(key string) string {
 	return c.Req.URL.Query().Get(key)
+}
+
+func (c *Context) Param(key string) string {
+	value, _ := c.Params[key]
+	return value
 }
 
 // set StatusCode of Context obj

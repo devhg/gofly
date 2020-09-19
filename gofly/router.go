@@ -2,7 +2,6 @@ package gofly
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 )
@@ -37,8 +36,6 @@ func parsePattern(pattern string) []string {
 
 // addRoute defines the methods to add handler router container
 func (r *router) addRoute(method, pattern string, handler HandlerFunc) {
-
-	log.Printf("Route %4s - %s", method, pattern)
 	key := method + "-" + pattern
 
 	// Trie树添加动态路由部分

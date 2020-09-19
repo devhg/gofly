@@ -1,6 +1,7 @@
 package gofly
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -79,8 +80,19 @@ func (r *router) getRoute(method, path string) (*node, map[string]string) {
 	return nil, nil
 }
 
+func (r *router) getRoutes(method string) []*node {
+	n, ok := r.roots[method]
+	if !ok {
+		return nil
+	}
+	nodes := make([]*node, 0)
+	n.travel(&nodes)
+	return nodes
+}
+
 // handle the request with the router table
 func (r *router) handler(c *Context) {
+	fmt.Println(c.Method, "--", c.Path)
 	n, params := r.getRoute(c.Method, c.Path)
 
 	if n != nil {

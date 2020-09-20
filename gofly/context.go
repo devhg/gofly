@@ -21,6 +21,10 @@ type Context struct {
 
 	// response info
 	StatusCode int
+
+	// 中间件
+	handlers []HandlerFunc
+	index    int
 }
 
 // create a new context obj
@@ -30,6 +34,7 @@ func NewContext(w http.ResponseWriter, r *http.Request) *Context {
 		Req:    r,
 		Path:   r.URL.Path,
 		Method: r.Method,
+		index:  -1,
 	}
 }
 
@@ -87,4 +92,19 @@ func (c *Context) HTML(code int, html string) {
 	c.SetHeader("Content-Type", "text/html;charset=utf-8")
 	c.Status(code)
 	c.Writer.Write([]byte(html))
+}
+
+// fail to response
+func (c *Context) Fail(code int, err string) {
+	c.index = len(c.handlers)
+	c.JSON(code, H{"message": err})
+}
+
+// pass to next handler
+func (c *Context) Next() {
+	c.index++
+	len := len(c.handlers)
+	for ; c.index < len; c.index++ {
+		c.handlers[c.index](c)
+	}
 }

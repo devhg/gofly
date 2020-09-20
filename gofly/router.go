@@ -1,7 +1,6 @@
 package gofly
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 )
@@ -89,14 +88,16 @@ func (r *router) getRoutes(method string) []*node {
 
 // handle the request with the router table
 func (r *router) handler(c *Context) {
-	fmt.Println(c.Method, "--", c.Path)
 	n, params := r.getRoute(c.Method, c.Path)
 
 	if n != nil {
 		c.Params = params
 		key := c.Method + "-" + n.pattern
-		r.handlers[key](c)
+		c.handlers = append(c.handlers, r.handlers[key])
 	} else {
-		c.String(http.StatusNotFound, "404 NOT FOUND: %s\n", c.Path)
+		c.handlers = append(c.handlers, func(c *Context) {
+			c.String(http.StatusNotFound, "404 NOT FOUND: %s\n", c.Path)
+		})
 	}
+	c.Next() // index:-1 ----> 中间件 A -> B -> r.handlers[key] -> [B -> A]
 }

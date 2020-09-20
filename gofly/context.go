@@ -25,6 +25,8 @@ type Context struct {
 	// 中间件
 	handlers []HandlerFunc
 	index    int
+
+	engine *Engine
 }
 
 // create a new context obj
@@ -88,10 +90,14 @@ func (c *Context) Data(code int, data []byte) {
 }
 
 // response the Html type
-func (c *Context) HTML(code int, html string) {
+func (c *Context) HTML(code int, name string, data interface{}) {
 	c.SetHeader("Content-Type", "text/html;charset=utf-8")
 	c.Status(code)
-	c.Writer.Write([]byte(html))
+	err := c.engine.htmlTemplates.ExecuteTemplate(c.Writer, name, data)
+
+	if err != nil {
+		c.Fail(http.StatusInternalServerError, err.Error())
+	}
 }
 
 // fail to response

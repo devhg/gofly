@@ -1,8 +1,10 @@
 package gofly
 
 import (
+	"html/template"
 	"log"
 	"net/http"
+	"path"
 	"strings"
 )
 
@@ -14,6 +16,9 @@ type Engine struct {
 	*RouterGroup
 	router *router
 	groups []*RouterGroup
+
+	htmlTemplates *template.Template // 将模板加载进内存
+	funcMap       template.FuncMap   // 自定义模板渲染函数
 }
 
 type RouterGroup struct {
@@ -30,8 +35,10 @@ func (engine *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			middlewares = append(middlewares, group.middlewares...)
 		}
 	}
+
 	context := NewContext(w, r)
 	context.handlers = middlewares
+	context.engine = engine
 	engine.router.handler(context)
 }
 
@@ -78,4 +85,37 @@ func (group *RouterGroup) addRoute(method, comp string, handler HandlerFunc) {
 
 func (group *RouterGroup) Use(middlewares ...HandlerFunc) {
 	group.middlewares = append(group.middlewares, middlewares...)
+}
+
+// create static handler
+func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileSystem) HandlerFunc {
+	path := path.Join(group.prefix, relativePath)
+	fileServer := http.StripPrefix(path, http.FileServer(fs))
+	return func(c *Context) {
+		file := c.Params["filepath"]
+		if _, err := fs.Open(file); err != nil {
+			c.Status(http.StatusNotFound)
+			return
+		}
+
+		fileServer.ServeHTTP(c.Writer, c.Req)
+	}
+}
+
+// serve static files
+func (group *RouterGroup) Static(relativePath, root string) {
+	handler := group.createStaticHandler(relativePath, http.Dir(root))
+	urlPattern := path.Join(relativePath, "/*filepath")
+	// Register GET handlers
+	group.GET(urlPattern, handler)
+}
+
+//设置自定义渲染函数map
+func (group *RouterGroup) SetFuncMap(funcMap template.FuncMap) {
+	group.engine.funcMap = funcMap
+}
+
+//加载模板
+func (engine *Engine) LoadHtmlGlob(pattern string) {
+	engine.htmlTemplates = template.Must(template.New("").Funcs(engine.funcMap).ParseGlob(pattern))
 }

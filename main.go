@@ -20,8 +20,7 @@ type Student struct {
 }
 
 func main() {
-	r := gofly.New()
-	r.Use(gofly.Logger)
+	r := gofly.Default()
 
 	// 添加模板渲染函数
 	r.SetFuncMap(template.FuncMap{
@@ -74,6 +73,11 @@ func main() {
 		})
 
 	}
+
+	r.GET("/panic", func(c *gofly.Context) {
+		names := []string{"devhui"}
+		c.String(http.StatusOK, names[100])
+	})
 
 	r.Static("/assets", "./static")
 

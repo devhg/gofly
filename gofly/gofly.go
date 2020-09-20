@@ -50,6 +50,13 @@ func New() *Engine {
 	return engine
 }
 
+// Default is a constructor of default engine
+func Default() *Engine {
+	engine := New()
+	engine.Use(Logger, Recovery())
+	return engine
+}
+
 // RUN defines the method to start a http server
 func (engine *Engine) Run(addr string) error {
 	return http.ListenAndServe(addr, engine)

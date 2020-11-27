@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/gofly-dev/gofly/gofly"
+	"github.com/cddgo/gofly"
 	"html/template"
 	"log"
 	"net/http"

@@ -1,7 +1,7 @@
-module github.com/gofly-dev/gofly
+module github.com/cddgo/gofly-test
 
 go 1.13
 
-require github.com/gofly-dev/gofly/gofly v0.0.0
+require github.com/cddgo/gofly v0.0.0
 
-replace github.com/gofly-dev/gofly/gofly => ./gofly
+replace github.com/cddgo/gofly => ./gofly

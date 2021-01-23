@@ -35,23 +35,24 @@ func parsePattern(pattern string) []string {
 
 // addRoute defines the methods to add handler router container
 func (r *router) addRoute(method, pattern string, handler HandlerFunc) {
-	key := method + "-" + pattern
+	key := method + "-" + pattern // "GET-/docs/:lang/doc"
 
 	// Trie树添加动态路由部分
-	parts := parsePattern(pattern)
+	parts := parsePattern(pattern) // ["docs", ":lang", "doc"]
 	_, ok := r.roots[method]
 	if !ok {
 		r.roots[method] = &node{}
 	}
 
+	// /docs/:lang/doc   ["docs", ":lang", "doc"]   0
 	r.roots[method].insert(pattern, parts, 0)
 	r.handlers[key] = handler
 }
 
 func (r *router) getRoute(method, path string) (*node, map[string]string) {
 	// Trie树获取动态路由部分
-	pathParts := parsePattern(path) // 请求传入的path /go/cn/doc
-	params := make(map[string]string)
+	pathParts := parsePattern(path)   // 请求传入的path 如：/docs/cn/doc
+	params := make(map[string]string) // 存储参数 如： :lang=cn
 
 	root, ok := r.roots[method]
 

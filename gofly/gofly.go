@@ -21,13 +21,6 @@ type Engine struct {
 	funcMap       template.FuncMap   // 自定义模板渲染函数
 }
 
-type RouterGroup struct {
-	prefix      string
-	middlewares []HandlerFunc
-	parent      *RouterGroup
-	engine      *Engine
-}
-
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var middlewares []HandlerFunc
 	for _, group := range engine.groups {
@@ -62,6 +55,19 @@ func (engine *Engine) Run(addr string) error {
 	return http.ListenAndServe(addr, engine)
 }
 
+//加载模板
+func (engine *Engine) LoadHtmlGlob(pattern string) {
+	engine.htmlTemplates = template.Must(template.New("").Funcs(engine.funcMap).ParseGlob(pattern))
+}
+
+type RouterGroup struct {
+	prefix      string
+	middlewares []HandlerFunc
+	parent      *RouterGroup
+	engine      *Engine
+}
+
+// Group create a route group
 func (group *RouterGroup) Group(prefix string) *RouterGroup {
 	engine := group.engine
 	newGroup := &RouterGroup{
@@ -90,8 +96,17 @@ func (group *RouterGroup) addRoute(method, comp string, handler HandlerFunc) {
 	group.engine.router.addRoute(method, pattern, handler)
 }
 
+// Use defines the methods to add a middlewares to the RouterGroup
 func (group *RouterGroup) Use(middlewares ...HandlerFunc) {
 	group.middlewares = append(group.middlewares, middlewares...)
+}
+
+// Static defines the methods to serve static files
+func (group *RouterGroup) Static(relativePath, root string) {
+	handler := group.createStaticHandler(relativePath, http.Dir(root))
+	urlPattern := path.Join(relativePath, "/*filepath")
+	// Register GET handlers
+	group.GET(urlPattern, handler)
 }
 
 // create static handler
@@ -109,20 +124,7 @@ func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileS
 	}
 }
 
-// serve static files
-func (group *RouterGroup) Static(relativePath, root string) {
-	handler := group.createStaticHandler(relativePath, http.Dir(root))
-	urlPattern := path.Join(relativePath, "/*filepath")
-	// Register GET handlers
-	group.GET(urlPattern, handler)
-}
-
 //设置自定义渲染函数map
 func (group *RouterGroup) SetFuncMap(funcMap template.FuncMap) {
 	group.engine.funcMap = funcMap
-}
-
-//加载模板
-func (engine *Engine) LoadHtmlGlob(pattern string) {
-	engine.htmlTemplates = template.Must(template.New("").Funcs(engine.funcMap).ParseGlob(pattern))
 }

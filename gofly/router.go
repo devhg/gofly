@@ -101,4 +101,5 @@ func (r *router) handler(c *Context) {
 		})
 	}
 	c.Next() // index:-1 ----> 中间件 A -> B -> r.handlers[key] -> [B -> A]
+	// 每个middleware 以 c.Next()为分界线。先执行分界线上面的 -> 走到handler并执行完 -> 执行中间件分界线下面的
 }

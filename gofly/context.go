@@ -106,7 +106,7 @@ func (c *Context) Fail(code int, err string) {
 	c.JSON(code, H{"message": err})
 }
 
-// pass to next handler
+// pass to next handler 巧妙的设计
 func (c *Context) Next() {
 	c.index++
 	len := len(c.handlers)

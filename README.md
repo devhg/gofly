@@ -12,6 +12,9 @@
 - [x] 支持模板引擎 html/templates
 - [x] 支持错误恢复 Panic recover
 
+### Structure
+![](./images/gofly.png)
+
 ### How to use
 
 just like

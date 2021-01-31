@@ -25,6 +25,7 @@ func trace(message string) string {
 	return str.String()
 }
 
+// 优先注册
 func Recovery() HandlerFunc {
 	return func(c *Context) {
 		//c.Next()
@@ -36,7 +37,6 @@ func Recovery() HandlerFunc {
 				c.Fail(http.StatusInternalServerError, "Internal Server Error")
 			}
 		}()
-		// 必须放到下面  原因未知
 		c.Next()
 	}
 }

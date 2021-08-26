@@ -28,7 +28,7 @@ func trace(message string) string {
 // 优先注册
 func Recovery() HandlerFunc {
 	return func(c *Context) {
-		//c.Next()
+		// c.Next()
 		// 如果panic在 defer的上方的话，下面defer recover的将不会被开启，必须将defer recover()放到panic的上方
 		defer func() {
 			if err := recover(); err != nil {
@@ -45,10 +45,10 @@ func RecoveryT() {
 	fmt.Println(123)
 	defer func() {
 		fmt.Println(2333)
-		//if err := recover(); err != nil {
-		//	message := fmt.Sprintf("%s", err)
-		//	log.Printf("%s\n\n", trace(message))
-		//
-		//}
+		// if err := recover(); err != nil {
+		// 	message := fmt.Sprintf("%s", err)
+		// 	log.Printf("%s\n\n", trace(message))
+
+		// }
 	}()
 }

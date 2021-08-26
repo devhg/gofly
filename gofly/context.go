@@ -51,8 +51,7 @@ func (c *Context) Query(key string) string {
 }
 
 func (c *Context) Param(key string) string {
-	value, _ := c.Params[key]
-	return value
+	return c.Params[key]
 }
 
 // set StatusCode of Context obj
@@ -70,7 +69,7 @@ func (c *Context) SetHeader(key, value string) {
 func (c *Context) String(code int, format string, values ...interface{}) {
 	c.SetHeader("Content-Type", "text/plain")
 	c.Status(code)
-	c.Writer.Write([]byte(fmt.Sprintf(format, values...)))
+	_, _ = c.Writer.Write([]byte(fmt.Sprintf(format, values...)))
 }
 
 // response the json type
@@ -86,7 +85,7 @@ func (c *Context) JSON(code int, obj interface{}) {
 // response the other type data
 func (c *Context) Data(code int, data []byte) {
 	c.Status(code)
-	c.Writer.Write(data)
+	_, _ = c.Writer.Write(data)
 }
 
 // response the Html type

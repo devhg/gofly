@@ -1,3 +1,3 @@
-module github.com/cddgo/gofly
+module github.com/devhg/gofly
 
 go 1.13

@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/cddgo/gofly"
 	"html/template"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/devhg/gofly"
 )
 
 func formatAsDate(t time.Time) string {
@@ -59,7 +60,7 @@ func main() {
 	}
 
 	v2 := r.Group("/v2")
-	//v2.Use(middlewareForV1())
+	// v2.Use(middlewareForV1())
 	{
 		v2.GET("/hello/:name", func(c *gofly.Context) {
 			// expect /hello/hui
@@ -71,7 +72,6 @@ func main() {
 				"password": c.PostForm("password"),
 			})
 		})
-
 	}
 
 	r.GET("/panic", func(c *gofly.Context) {
@@ -80,6 +80,5 @@ func main() {
 	})
 
 	r.Static("/assets", "./static")
-
 	log.Fatal(r.Run(":8081"))
 }

@@ -19,7 +19,7 @@ func (n *node) matchChild(part string) *node {
 	return nil
 }
 
-//
+// matchChildren .
 func (n *node) matchChildren(part string) []*node {
 	nodes := make([]*node, 0)
 	for _, child := range n.children {

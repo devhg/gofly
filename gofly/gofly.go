@@ -55,8 +55,8 @@ func (engine *Engine) Run(addr string) error {
 	return http.ListenAndServe(addr, engine)
 }
 
-//加载模板
-func (engine *Engine) LoadHtmlGlob(pattern string) {
+// LoadHTMLGlob 加载模板
+func (engine *Engine) LoadHTMLGlob(pattern string) {
 	engine.htmlTemplates = template.Must(template.New("").Funcs(engine.funcMap).ParseGlob(pattern))
 }
 
@@ -124,7 +124,7 @@ func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileS
 	}
 }
 
-//设置自定义渲染函数map
+// 设置自定义渲染函数map
 func (group *RouterGroup) SetFuncMap(funcMap template.FuncMap) {
 	group.engine.funcMap = funcMap
 }

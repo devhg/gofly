@@ -15,8 +15,8 @@ func Test_node_insert(t *testing.T) {
 	for _, v := range nodes {
 		fmt.Printf("%p, %v\n", v, v)
 	}
-	//0xc0000129c0, &{/doc/:lang :lang [0xc000012a80] true}
-	//0xc000012a80, &{/doc/zhcn/go go [] false}  // 上面的孩子
+	// 0xc0000129c0, &{/doc/:lang :lang [0xc000012a80] true}
+	// 0xc000012a80, &{/doc/zhcn/go go [] false}  // 上面的孩子
 
 	search := root.search(parsePattern("/doc/en"), 0)
 	fmt.Println(search)
